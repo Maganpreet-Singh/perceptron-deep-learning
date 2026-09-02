@@ -2,14 +2,15 @@
 
 # 🧠 Perceptron — Deep Learning From Scratch
 
-### A hands-on implementation of the fundamental building block behind neural networks
+### Building intuition for neural networks, one neuron at a time.
 
 <p>
   <img src="https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/NumPy-Scientific%20Computing-013243?style=for-the-badge&logo=numpy&logoColor=white" alt="NumPy">
-  <img src="https://img.shields.io/badge/Pandas-Data%20Analysis-150458?style=for-the-badge&logo=pandas&logoColor=white" alt="Pandas">
-  <img src="https://img.shields.io/badge/Scikit--learn-Machine%20Learning-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" alt="Scikit-learn">
+  <img src="https://img.shields.io/badge/NumPy-Numerical_Computing-013243?style=for-the-badge&logo=numpy&logoColor=white" alt="NumPy">
+  <img src="https://img.shields.io/badge/Pandas-Data_Analysis-150458?style=for-the-badge&logo=pandas&logoColor=white" alt="Pandas">
+  <img src="https://img.shields.io/badge/Scikit--learn-Machine_Learning-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" alt="Scikit-learn">
   <img src="https://img.shields.io/badge/Jupyter-Notebook-F37626?style=for-the-badge&logo=jupyter&logoColor=white" alt="Jupyter">
+  <img src="https://img.shields.io/badge/mlxtend-Visualization-2E7D32?style=for-the-badge" alt="mlxtend">
 </p>
 
 <p>
@@ -20,104 +21,168 @@
 
 ---
 
-## 📌 Overview
+## 📌 About This Project
 
-This repository is a practical deep-learning learning project focused on the **Perceptron**, one of the earliest and simplest models for binary classification.
+This repository is a **fundamentals-first Deep Learning project** focused on the **Perceptron**, one of the simplest and most important models for binary classification.
 
-The implementation uses a Jupyter Notebook and a small placement dataset to explore how a linear neuron can combine input features, apply weights and bias, produce a prediction, and evaluate classification performance.
+The project uses a small student-placement dataset to explore how a linear classifier learns from input features such as **CGPA** and **resume score**. The notebook walks through data loading, exploration, preprocessing, model training, evaluation, and visualization.
 
-The project covers the core ideas behind an artificial neuron, including:
+The goal is not simply to call a machine-learning API. The goal is to understand what is happening behind the API:
 
-- Weighted inputs
-- Bias
-- Linear decision boundaries
-- Activation functions
-- Perceptron learning and prediction
-- Binary classification
-- Train/test splitting
-- Model evaluation
-- Confusion matrices and classification reports
-- Decision-region visualization
+```text
+Features
+   ↓
+Weighted Sum
+   ↓
+Bias
+   ↓
+Activation / Decision
+   ↓
+Prediction
+   ↓
+Error
+   ↓
+Parameter Update
+   ↓
+Learning
+```
 
-This is intentionally a **fundamentals-first** project: the goal is not to hide the mathematics behind a high-level deep-learning framework, but to make the mechanics of a basic neural model easy to inspect and understand.
+> 💡 A Perceptron is small. The idea behind it is not.
 
 ---
 
 ## 🎯 Learning Objectives
 
-By working through this repository, you can build intuition for:
+By completing this project, you should be able to explain:
 
-1. **How an artificial neuron works** — inputs are multiplied by weights and combined with a bias.
-2. **How classification decisions are made** — the model separates data using a learned linear boundary.
-3. **How a model learns** — weights are adjusted according to the Perceptron learning rule.
-4. **Why bias matters** — it shifts the decision boundary instead of forcing it through the origin.
-5. **How supervised learning is evaluated** — predictions can be compared against known labels using standard classification metrics.
-6. **How visualization helps** — decision regions make the learned classifier easier to reason about.
+- What an artificial neuron is.
+- Why a model needs **weights** and **bias**.
+- How a Perceptron creates a binary prediction.
+- What a **linear decision boundary** means.
+- How supervised learning uses labelled examples.
+- How classification models are evaluated.
+- Why a single Perceptron cannot solve every classification problem.
+- How the Perceptron connects to modern neural networks.
+
+This makes the repository a useful starting point before moving into **ANNs, MLPs, backpropagation, CNNs, RNNs, and Transformers**.
 
 ---
 
-## 🧮 Perceptron Fundamentals
+## 🧮 The Mathematics Behind a Perceptron
 
-A Perceptron receives an input vector and computes a weighted sum:
+For an input vector:
+
+$$
+x = [x_1, x_2, ..., x_n]
+$$
+
+with weights:
+
+$$
+w = [w_1, w_2, ..., w_n]
+$$
+
+and bias $b$, the Perceptron calculates:
+
+$$
+z = w_1x_1 + w_2x_2 + ... + w_nx_n + b$$
+
+or more compactly:
+
+$$
+z = w^Tx + b$$
+
+A threshold-style decision function then produces the predicted class:
+
+$$
+\hat{y} = f(z)
+$$
+
+For a binary classifier, the decision can be represented conceptually as:
 
 ```text
-z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b
+if z >= 0:
+    predict class 1
+else:
+    predict class 0
 ```
 
-A threshold-style activation then converts the score into a class prediction:
+### 🧠 Why this matters
 
-```text
-ŷ = activation(z)
-```
+This tiny equation introduces several concepts that appear repeatedly in Deep Learning:
 
-For a binary classification problem, the model learns a linear decision rule. In two dimensions, that rule can be visualized as a straight decision boundary separating the two classes.
+**parameters → weighted combinations → activation → prediction → error → learning**
 
-### 🔁 Learning intuition
+Once these ideas become intuitive, deeper neural-network architectures stop feeling like magic.
 
-At a high level, the training loop is:
+---
 
-```text
-Input data
-    ↓
-Weighted sum + bias
-    ↓
-Activation / prediction
-    ↓
-Compare with target
-    ↓
-Update weights and bias
-    ↓
-Repeat across training samples
-```
+## 🔁 Perceptron Learning Intuition
 
-This simple mechanism is historically important because it introduces the same basic ingredients that appear throughout neural-network learning: **parameters, activations, predictions, errors, and parameter updates**.
+The Perceptron learns by repeatedly examining training examples and adjusting its parameters when the current prediction is incorrect.
+
+A simplified update rule can be expressed as:
+
+$$
+w \leftarrow w + \eta(y - \hat{y})x$$
+
+$$
+b \leftarrow b + \eta(y - \hat{y})$$
+
+where:
+
+| Symbol | Meaning |
+|---|---|
+| $w$ | Weight vector |
+| $b$ | Bias |
+| $x$ | Input features |
+| $y$ | True class |
+| $\hat{y}$ | Predicted class |
+| $\eta$ | Learning rate |
+
+The important idea is simple:
+
+> **Wrong prediction → adjust parameters → try again.**
 
 ---
 
 ## 📊 Dataset
 
-The repository includes `placement.csv`, a compact binary-classification dataset with **100 rows** and three columns:
+The repository contains `placement.csv`, a compact binary-classification dataset with **100 samples** and three columns. The notebook confirms the dataset shape as `(100, 3)`.
 
-| Feature / Target | Description |
-|---|---|
-| `cgpa` | Student CGPA feature |
-| `resume_score` | Resume score feature |
-| `placed` | Binary placement target (`0` or `1`) |
+| Column | Type | Role |
+|---|---|---|
+| `cgpa` | Float | Student academic feature |
+| `resume_score` | Float | Resume-related feature |
+| `placed` | Integer | Binary target: `0` or `1` |
 
-The notebook loads the dataset with Pandas and performs basic inspection and descriptive analysis before training the classifier.
+Example records from the dataset:
 
-### Dataset snapshot
+| `cgpa` | `resume_score` | `placed` |
+|---:|---:|---:|
+| 8.14 | 6.52 | 1 |
+| 6.17 | 5.17 | 0 |
+| 8.27 | 8.86 | 1 |
+| 6.88 | 7.27 | 1 |
+| 7.52 | 7.30 | 1 |
 
-```text
-cgpa   resume_score   placed
-8.14      6.52          1
-6.17      5.17          0
-8.27      8.86          1
-6.88      7.27          1
-7.52      7.30          1
-```
+The two numerical input features also make the dataset suitable for visualizing a two-dimensional decision boundary.
 
-Because the dataset contains two input features, it is also well suited for visualizing the classifier's **decision regions**.
+---
+
+## 🔍 Exploratory Data Analysis
+
+The notebook performs basic inspection before model training, including:
+
+- Dataset shape
+- Column names
+- Data types
+- Descriptive statistics
+- Missing-value checks
+- Feature/target separation
+- Visual exploration
+
+The observed dataset contains two numerical features and a binary target, making it a clean example for learning linear classification.
 
 ---
 
@@ -126,82 +191,136 @@ Because the dataset contains two input features, it is also well suited for visu
 ```text
 perceptron-deep-learning/
 │
-├── 📓 Perceptron.ipynb   # Complete notebook: exploration, training & evaluation
-├── 📄 placement.csv      # Dataset used for binary classification
-└── 📘 README.md          # Project documentation
+├── 📓 Perceptron.ipynb
+│   └── Main notebook: data exploration, model training,
+│       evaluation, and decision-region visualization
+│
+├── 📓 Perceptron Code.ipynb
+│   └── Additional Perceptron-focused notebook
+│
+├── 📓 Perceptron Loss Function.ipynb
+│   └── Notebook focused on the Perceptron loss function
+│
+├── 📄 placement.csv
+│   └── Dataset used for binary classification
+│
+└── 📘 README.md
+    └── Project documentation
 ```
 
 ---
 
-## 🧪 What the Notebook Covers
+## 🧪 Main Notebook Workflow
 
-### 1. Environment and imports
+### 1. Import the required libraries
 
-The notebook uses a lightweight Python data-science stack:
-
-- **NumPy** for numerical operations
-- **Pandas** for loading and inspecting tabular data
-- **Matplotlib** for plotting
-- **Seaborn** for visual exploration
-- **Scikit-learn** for the Perceptron model, train/test splitting, and evaluation metrics
-- **mlxtend** for decision-region visualization
-
-### 2. Data loading
-
-The dataset is loaded from the repository with:
+The main notebook uses:
 
 ```python
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import Perceptron
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    classification_report
+)
+from mlxtend.plotting import plot_decision_regions
+```
+
+### 2. Load the dataset
+
+```python
 df = pd.read_csv("placement.csv")
 df.head()
 ```
 
-### 3. Data inspection
+### 3. Inspect the data
 
-The notebook checks the shape, columns, data types, descriptive statistics, and missing values before modeling.
+The notebook checks:
 
-### 4. Feature/target preparation
+```python
+df.shape
+df.columns
+df.info()
+df.describe()
+```
 
-The input features are:
+### 4. Select features and target
 
 ```python
 X = df[["cgpa", "resume_score"]]
-```
-
-The target is:
-
-```python
 y = df["placed"]
 ```
 
-### 5. Train/test split
+### 5. Split the dataset
 
-The data is divided into training and test sets using `train_test_split` so that model performance can be evaluated on unseen examples.
+The data is divided into training and testing sets so the trained model can be evaluated on unseen examples.
 
-### 6. Perceptron training
-
-The notebook uses Scikit-learn's `Perceptron` implementation to train the classifier on the placement dataset.
-
-### 7. Evaluation
-
-The notebook imports and uses:
+### 6. Train the Perceptron
 
 ```python
-accuracy_score
-confusion_matrix
-classification_report
+model = Perceptron()
+model.fit(X_train, y_train)
 ```
 
-These provide complementary views of model performance:
+### 7. Generate predictions
 
-- **Accuracy** — overall proportion of correct predictions.
-- **Confusion matrix** — counts of correct and incorrect predictions by class.
-- **Classification report** — precision, recall, F1-score, and support.
+```python
+y_pred = model.predict(X_test)
+```
 
-### 8. Decision-region visualization
+### 8. Evaluate the classifier
 
-The notebook also uses `plot_decision_regions` from `mlxtend` to visualize how the trained Perceptron separates the two classes in feature space.
+The notebook uses three complementary evaluation tools:
+
+```python
+accuracy_score(y_test, y_pred)
+confusion_matrix(y_test, y_pred)
+classification_report(y_test, y_pred)
+```
+
+### 9. Visualize decision regions
+
+The project uses `plot_decision_regions` from `mlxtend` to make the learned classification boundary easier to understand.
+
+---
+
+## 📈 Model Evaluation
+
+### Accuracy
+
+Accuracy measures the proportion of predictions that are correct:
+
+$$
+Accuracy = \frac{Correct\ Predictions}{Total\ Predictions}
+$$
+
+### Confusion Matrix
+
+A confusion matrix summarizes classification results by showing counts of:
+
+- True Positives
+- True Negatives
+- False Positives
+- False Negatives
+
+### Classification Report
+
+The classification report provides:
+
+| Metric | Meaning |
+|---|---|
+| Precision | How many predicted positives were actually positive |
+| Recall | How many actual positives were correctly detected |
+| F1-score | Harmonic mean of precision and recall |
+| Support | Number of true samples in each class |
+
+> The repository focuses on learning the workflow rather than claiming that a small educational dataset represents a production-grade placement predictor.
 
 ---
 
@@ -209,22 +328,25 @@ The notebook also uses `plot_decision_regions` from `mlxtend` to visualize how t
 
 ### Prerequisites
 
-Install Python 3.x and a Jupyter-compatible environment.
+Install:
 
-### 1. Clone the repository
+- Python 3.x
+- Jupyter Notebook or JupyterLab
+
+### Clone the repository
 
 ```bash
 git clone https://github.com/Maganpreet-Singh/perceptron-deep-learning.git
 cd perceptron-deep-learning
 ```
 
-### 2. Install dependencies
+### Install dependencies
 
 ```bash
 pip install numpy pandas matplotlib seaborn scikit-learn mlxtend jupyter
 ```
 
-### 3. Launch Jupyter Notebook
+### Launch Jupyter
 
 ```bash
 jupyter notebook
@@ -236,13 +358,13 @@ Open:
 Perceptron.ipynb
 ```
 
-Then execute the cells from top to bottom.
+Run the notebook cells from top to bottom.
 
 ---
 
-## 💻 Minimal Perceptron Example
+## 💻 Minimal Working Example
 
-A simplified version of the workflow looks like this:
+Here is the core workflow in one place:
 
 ```python
 import pandas as pd
@@ -251,7 +373,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import Perceptron
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
-# Load data
+# Load dataset
 df = pd.read_csv("placement.csv")
 
 # Features and target
@@ -260,10 +382,13 @@ y = df["placed"]
 
 # Train/test split
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
 )
 
-# Create and train model
+# Train Perceptron
 model = Perceptron()
 model.fit(X_train, y_train)
 
@@ -276,142 +401,237 @@ print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
 ```
 
-> **Note:** The exact numeric results depend on the train/test split and model configuration used in the notebook.
+> **Note:** Exact metric values depend on the train/test split and model configuration used when the notebook is executed.
 
 ---
 
 ## 🧠 Why the Perceptron Matters
 
-The Perceptron is simple, but the idea behind it is foundational.
+The Perceptron is historically simple, but conceptually important.
 
-Modern neural networks are vastly more capable, yet they still build on familiar concepts:
+A useful mental model is:
 
 ```text
-Perceptron
-   ↓
-Artificial Neuron
-   ↓
-Layers of Neurons
-   ↓
-Neural Networks
-   ↓
-Deep Neural Networks
+                    ┌─────────────┐
+Input Features ───► │   Weights   │
+                    └──────┬──────┘
+                           │
+                           ▼
+                    Weighted Sum
+                           │
+                         + Bias
+                           │
+                           ▼
+                     Activation
+                           │
+                           ▼
+                       Prediction
 ```
 
-Studying the Perceptron first makes later topics such as **logistic regression, multilayer perceptrons, backpropagation, activation functions, gradient-based optimization, and deep neural networks** much easier to understand.
+A single Perceptron produces a **linear decision boundary**. That makes it powerful enough for some problems but fundamentally limited for problems that require nonlinear separation.
+
+The classic example is **XOR**: a single linear Perceptron cannot represent the XOR decision pattern.
+
+That limitation is exactly why learning progresses naturally from:
+
+```text
+Single Perceptron
+        ↓
+Multiple Neurons
+        ↓
+Multilayer Perceptron (MLP)
+        ↓
+Forward Propagation
+        ↓
+Loss Functions
+        ↓
+Gradient Descent
+        ↓
+Backpropagation
+        ↓
+Deep Neural Networks
+```
 
 ---
 
 ## ✅ Strengths
 
-- Easy to understand and implement.
-- Fast for small linearly separable classification problems.
-- Excellent starting point for learning neural-network fundamentals.
-- Makes the idea of weights and bias concrete.
+- Simple and fast.
+- Excellent for learning binary classification.
+- Makes weights and bias tangible.
 - Produces an interpretable linear decision boundary.
+- Provides a strong conceptual bridge into neural networks.
 
 ## ⚠️ Limitations
 
-The classic Perceptron is a **linear classifier**. That means it cannot correctly represent arbitrary non-linearly separable patterns.
+- It is a **linear classifier**.
+- It cannot model arbitrary nonlinear decision boundaries.
+- It is not suitable as a general-purpose deep-learning architecture.
+- Real-world predictive systems require better data, validation, feature design, model selection, and domain-specific evaluation.
 
-For problems requiring richer representations, the natural next step is to move from a single linear neuron to **multilayer neural networks** and learn how backpropagation enables them to model complex relationships.
+In other words: **the Perceptron is a foundation, not the final destination.**
 
 ---
 
-## 🔬 Key Concepts to Study Next
+## 🔬 Hands-On Experiments to Try
 
-This repository is a strong starting point for a deep-learning progression:
+Turn this repository into a stronger learning lab by experimenting with:
+
+### Experiment 1 — Change the train/test split
+
+Compare different test sizes and observe how evaluation changes.
+
+### Experiment 2 — Change model hyperparameters
+
+Experiment with parameters such as:
+
+- `max_iter`
+- `eta0`
+- `tol`
+- `random_state`
+
+### Experiment 3 — Visualize the decision boundary
+
+Compare how the learned boundary changes after retraining.
+
+### Experiment 4 — Test linear separability
+
+Create a synthetic dataset where classes are clearly separable and compare it with a non-linearly separable dataset.
+
+### Experiment 5 — Break the model with XOR
+
+Use XOR to see a core limitation of a single linear neuron.
+
+### Experiment 6 — Compare algorithms
+
+Compare the Perceptron with:
+
+- Logistic Regression
+- K-Nearest Neighbors
+- Decision Tree
+- Support Vector Machine
+
+This is where the difference between **linear models** and **nonlinear decision-making** becomes much clearer.
+
+---
+
+## 🧭 Learning Roadmap After This Project
+
+This repository fits naturally into a broader Deep Learning journey:
 
 ```text
-Perceptron
-   ↓
-Activation Functions
-   ↓
-Neural Network Architecture
-   ↓
-Forward Propagation
-   ↓
-Loss Functions
-   ↓
-Gradient Descent
-   ↓
-Backpropagation
-   ↓
-MLP / ANN
-   ↓
-CNN → Computer Vision
-   ↓
-RNN / LSTM → Sequential Data
-   ↓
-Transformers → Modern NLP & Multimodal AI
+✅ Classical Machine Learning
+        ↓
+✅ Perceptron
+        ↓
+🔜 Activation Functions
+        ↓
+🔜 Artificial Neural Networks
+        ↓
+🔜 Forward Propagation
+        ↓
+🔜 Loss Functions
+        ↓
+🔜 Gradient Descent
+        ↓
+🔜 Backpropagation
+        ↓
+🔜 Optimizers
+        ↓
+🔜 Regularization
+        ↓
+🔜 CNNs — Computer Vision
+        ↓
+🔜 RNN / LSTM — Sequential Data
+        ↓
+🔜 Attention
+        ↓
+🔜 Transformers
+        ↓
+🔜 Modern Deep Learning Applications
 ```
+
+The fastest way forward is not to memorize every architecture. **Build small models, inspect the math, make mistakes, debug them, and repeat.**
 
 ---
 
-## 📚 Recommended Study Questions
+## 📚 Questions You Should Be Able to Answer
 
-After completing the notebook, make sure you can answer these without looking at the code:
+After finishing the project, try answering these without opening the notebook:
 
-- What problem does a Perceptron solve?
-- Why do we need weights?
-- What is the purpose of the bias term?
-- What makes a decision boundary linear?
-- What happens when a sample is misclassified?
-- Why can a single Perceptron not solve XOR?
-- What is the difference between a Perceptron and a multilayer neural network?
-- How are accuracy, precision, recall, and F1-score different?
+1. What is a Perceptron?
+2. What is the role of a weight?
+3. What is the role of bias?
+4. Why is the decision boundary linear?
+5. How does a Perceptron update its parameters?
+6. What does a learning rate control?
+7. What is the difference between a prediction and a true label?
+8. What does a confusion matrix tell you?
+9. Why can a single Perceptron not solve XOR?
+10. What changes when we move from one neuron to a multilayer network?
 
-These questions matter more than simply memorizing the API.
+If you can answer these clearly, you are not just using a model—you are starting to understand one.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Technology | Purpose |
+| Tool | Purpose |
 |---|---|
-| **Python** | Core programming language |
-| **NumPy** | Numerical computing |
-| **Pandas** | Dataset loading and analysis |
-| **Matplotlib** | Visualization |
+| **Python** | Programming language |
+| **NumPy** | Numerical operations |
+| **Pandas** | Data loading and analysis |
+| **Matplotlib** | Plotting and visualization |
 | **Seaborn** | Statistical visualization |
-| **Scikit-learn** | Perceptron model and evaluation utilities |
-| **mlxtend** | Decision-region plotting |
-| **Jupyter Notebook** | Interactive experimentation and learning |
+| **Scikit-learn** | Perceptron model and evaluation |
+| **mlxtend** | Decision-region visualization |
+| **Jupyter Notebook** | Interactive experimentation |
 
 ---
 
 ## 🌱 Project Philosophy
 
-This repository follows a simple rule:
-
 > **Learn the mechanism before hiding behind the framework.**
 
-The point of this project is not to build the most sophisticated classifier. It is to develop the intuition needed to understand what a neural model is actually doing under the hood.
+High-level libraries are useful. Understanding the underlying idea is better.
 
-That foundation pays off later. A lot.
+The purpose of this repository is to build the kind of intuition that makes later topics easier to reason about—not to pretend that one small notebook is a production ML system.
+
+Start with one neuron. Understand it deeply. Then stack the neurons.
 
 ---
 
-## 🔮 Future Extensions
+## 🔮 Future Improvements
 
-Possible improvements for this learning project include:
+Planned learning extensions include:
 
-- Implement the Perceptron **manually using NumPy**, without Scikit-learn.
-- Visualize the weight updates over training iterations.
-- Plot the decision boundary before and after training.
-- Experiment with different learning rates and iteration counts.
-- Demonstrate the Perceptron's failure on the XOR problem.
-- Compare the Perceptron with Logistic Regression.
-- Build a simple multilayer neural network from scratch.
-- Add backpropagation and gradient descent step by step.
+- [ ] Implement a Perceptron **from scratch using NumPy**.
+- [ ] Implement the Perceptron loss manually.
+- [ ] Visualize weight updates over iterations.
+- [ ] Plot the decision boundary before and after training.
+- [ ] Demonstrate XOR failure.
+- [ ] Compare Perceptron vs Logistic Regression.
+- [ ] Build a small neural network from scratch.
+- [ ] Implement gradient descent manually.
+- [ ] Implement backpropagation step by step.
+- [ ] Move from a single neuron to an MLP / ANN.
 
 ---
 
 ## 🤝 Contributing
 
-This is primarily a learning repository, but improvements are welcome.
+This repository is primarily a learning project, and educational improvements are welcome.
 
-A useful contribution should ideally make the project **clearer, more reproducible, or more educational**.
+Good contributions should improve one or more of the following:
+
+- Clarity
+- Reproducibility
+- Mathematical understanding
+- Code quality
+- Visual explanations
+- Learning value
+
+Typical workflow:
 
 ```text
 Fork → Improve → Commit → Pull Request
@@ -421,24 +641,26 @@ Fork → Improve → Commit → Pull Request
 
 ## 👤 Author
 
-**Maganpreet Singh**
+### Maganpreet Singh
 
-Learning and building in **Machine Learning & Deep Learning**, one concept at a time.
+Machine Learning & Deep Learning learner building projects to understand models from fundamentals to practical applications.
 
-GitHub: [@Maganpreet-Singh](https://github.com/Maganpreet-Singh)
+**GitHub:** [@Maganpreet-Singh](https://github.com/Maganpreet-Singh)
 
 ---
 
 ## ⭐ Support the Journey
 
-If this repository helps you understand the fundamentals of neural networks, consider giving it a ⭐.
+If this repository helps you learn something, consider giving it a ⭐ and exploring the other machine-learning projects in the profile.
 
-More importantly: **keep building.**
+The real goal is bigger than one repository:
+
+> **Learn. Build. Break. Debug. Repeat.**
 
 ---
 
 <div align="center">
 
-### 🧠 Understand the neuron. Build the network. Learn the system.
+### 🧠 One neuron today. Deep learning tomorrow.
 
 </div>
